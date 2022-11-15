@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      BBCode Configuration Schema
+      Copyright (c) 2009 - PJ on Development.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="Configuration" type="TConfiguration" />
+
+  <xs:complexType name="TConfiguration">
+    <xs:annotation>
+      <xs:documentation>
+        This type is the root of the configuration file.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:group ref="GDictionaryFirst" minOccurs="0" maxOccurs="1"/>
+      <xs:group ref="GDictionaryLast" minOccurs="0" maxOccurs="1"/>
+    </xs:choice>
+    <xs:attribute name="version" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!-- GDictionaryFirst and GDictionaryLast allow us to define the xsd to be order-independent for the Dictionary element & EntityTypes element. -->
+  <xs:group name="GDictionaryFirst">
+    <xs:sequence>
+      <xs:element name="Dictionary" type="TDictionary" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="ElementTypes" type="TElementTypes" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="GDictionaryLast">
+    <xs:sequence>
+      <xs:element name="ElementTypes" type="TElementTypes" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Dictionary" type="TDictionary" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="TElementTypes">
+    <xs:annotation>
+      <xs:documentation>
+        Describes the list of known BBCode element that requires an specific type.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Element">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:string" use="required" />
+          <xs:attribute name="type" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>
+                The type must be assignable to a BBCodeElement.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TDictionary">
+    <xs:annotation>
+      <xs:documentation>
+        Describes the known BBCode elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="item">
+        <xs:complexType mixed="true">
+          <xs:sequence minOccurs="0">
+            <xs:any processContents ="lax" maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="name" type="xs:string" use="required" />
+          <xs:attribute name="requireClosingTag" type="xs:string" use="required" />
+          <xs:attribute name="escaped" type="xs:boolean" use="optional" />
+          <xs:anyAttribute processContents="lax"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+</xs:schema>
